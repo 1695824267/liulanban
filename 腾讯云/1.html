@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>网页背景视频</title>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        overflow-x: hidden;
+        position: relative;
+    }
+    video {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100vw;
+        opacity: 0.5; /* 设置视频透明度 */
+        z-index: -1;
+    }
+    .bg-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url('./static/picture/beijing_blue.jpg');
+        background-size: cover;
+        z-index: -2;
+    }
+    .content {
+        z-index: 1;
+        color: white;
+        font-size: 24px;
+        width: 70vh;
+        min-height: 90vh;
+        text-align: center;
+        background-color: transparent; /* 设置背景色为透明 */
+        padding: 20px;
+        border:3px solid rgba(191, 8, 242, 0.6);
+        border-radius: 10px; /* 添加圆角边框 */
+        
+    }
+    .hang{
+        overflow: hidden;
+    }
+    input[type="text"],input[type="submit"],button{
+        margin-bottom: 10px;
+    }
+    h1{
+        color: rgba(255,120,80,0.5);
+        font-family: cursive, serif, sans-serif;
+        -webkit-text-stroke: 0.1px rgba(213, 25, 21, 0.5);
+        margin-top: 0px;
+        margin-bottom: 0px;
+    }
+    .p2{
+        font-size: 16px;
+        font-family: cursive, serif, sans-serif;
+        color: rgba(30, 30, 56, 0.7);
+        font-weight: 600;
+        text-align: left;
+        margin-top: 3px;
+        margin-bottom: 3px;
+        word-break:break-all;
+        word-wrap:break-word;
+    }
+    .p4{
+        font-size: 14px;
+        font-family: cursive, serif, sans-serif;
+        color: rgba(34, 34, 76, 0.7);
+        font-weight: 600;
+        margin-top: 3px;
+        margin-bottom: 3px;
+        
+    }
+    .zhiding{
+        width: 30%;
+        min-height: 100px;
+        float: left;
+    }
+    .blue{
+        background-color: rgba(80,120,255,0.2);
+        border:3px solid rgba(255, 255, 255, 0.5);
+        border-radius: 10px;
+    }
+    .red{
+        background-color: rgba(255,120,150,0.2);
+        border:3px solid rgba(255, 255, 255, 0.5);
+        border-radius: 10px;
+    }
+    .h{
+        width: 37%;       
+    }
+    .global_op{
+       
+    }
+    .button-1{
+        width: 70px;
+        height: 25px;
+        
+    }
+    button{
+        outline:none;
+        
+       
+    }
+    .messageInput{
+        outline:none;
+        width: 300px;
+        height: 24px;
+        border-radius: 10px;
+        border:2px solid rgba(22, 122, 236, 0.8);
+        background-color: rgba(255,255,255,0.4);
+        color: rgba(0, 0, 0, 0.8);
+        font-size: 16px;
+    }
+    .messages{
+        width: 100%;
+        margin-top: 5px;
+        margin-bottom: 5px;
+        display: flex;
+        flex-direction: column-reverse;
+        
+        
+    }
+    .message_text{
+        width: 67%;
+        min-height: 40px;
+        margin-left: 4px;
+        background-color: rgba(255,255,255,0.2);
+        border:2px solid rgba(248, 169, 9, 0.8);  
+        border-radius: 10px; 
+        float: left;
+        
+    }
+    .message_info{
+        width: 30%;
+        min-height: 40px;
+        background-color: rgba(255,255,255,0.2);
+        border:2px solid rgba(105, 232, 38, 0.8);  
+        border-radius: 10px; 
+        float: left;   
+    }
+    .message_item{
+        overflow: hidden;
+        margin-top: 3px;
+    }
+    
+</style>
+</head>
+<body>
+    <video id="videoBackground" autoplay muted loop>
+        <source src="./static/video/1.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <div class="bg-image"></div>
+    <div class="content">
+        <div class="daohang hang">
+            <div class="zhiding blue"></div>
+            <div class="zhiding h">
+                <div><h1>留言板</h1></div>                
+                <div class="global_op">
+                    <form action="">
+                        <button class="button-1" onclick="setIdentity()">设置身份</button>
+                        <button class="button-1" onclick="clearCache()">清除缓存</button>
+                    </form>
+                </div>
+            </div>
+            <div class="zhiding red"></div>
+        </div>
+        
+        <div>
+            <form action="" id="doMessage">
+                <input class="messageInput" type="text" id="messageInput" placeholder="输入您的留言" form="doMessage">
+                <input class="button-1" type="submit" value="添加留言" onclick="addMessage() ">           
+            </form>
+        </div>
+        
+        
+        <div class="messages" id="messages">
+            <div class="message_item">  
+                <div class="message_info"><p class="p4">${msg.timestamp}</p><p class="p4">(from ${msg.identity})</p></div>
+                <div class="message_text"><p class="p2">${msg.message}</p></div>
+            </div>
+                       
+        </div>
+    </div>
+</body>
+<script>
+let identity = "my firend"; 
+
+function setIdentity() {
+    const newIdentity = prompt("请输入您的身份信息", "OO");
+    if (newIdentity) {
+        identity = newIdentity;
+    }
+}
+
+function addMessage() {
+    const messageInput = document.getElementById("messageInput");
+    const message = messageInput.value;
+    if (message.trim() === "") {
+        alert("请输入留言内容");
+        return;
+    }
+
+    const messagesDiv = document.getElementById("messages");
+    const timestamp = new Date().toLocaleString();
+    const newMessage = `<div class="message">${timestamp} ${message} (from ${identity})</div>`;
+    messagesDiv.innerHTML += newMessage;
+
+    // 保存留言到本地存储
+    let messages = JSON.parse(localStorage.getItem("messages")) || [];
+    messages.push({ message, timestamp, identity });
+    localStorage.setItem("messages", JSON.stringify(messages));
+
+    messageInput.value = "";
+}
+
+function clearCache() {
+    localStorage.removeItem("messages");
+    document.getElementById("messages").innerHTML = "";
+}
+
+// 页面加载时显示已保存的留言
+window.onload = function() {
+    let messages = JSON.parse(localStorage.getItem("messages")) || [];
+    const messagesDiv = document.getElementById("messages");
+    messages.forEach(msg => {
+        const message = `<div class="message_item">  
+                <div class="message_info"><p class="p4">${msg.timestamp}</p><p class="p4">(from ${msg.identity})</p></div>
+                <div class="message_text"><p class="p2">${msg.message}</p></div>
+            </div>`;
+        // const message = `<div class="message">${msg.timestamp} ${msg.message} (from ${msg.identity})</div>`;
+        messagesDiv.innerHTML += message;
+    });
+}
+
+const video = document.getElementById('videoBackground');
+
+document.addEventListener('visibilitychange', function() {
+    if (document.visibilityState === 'visible') {
+        video.muted = false;
+        console.log(0)
+    } else {
+        video.muted = true;
+        console.log(1)
+    }
+})
+
+
+</script>
+</html>
